@@ -1,3 +1,4 @@
+require 'set'
 require 'card'
 
 describe Card do
@@ -18,52 +19,79 @@ describe Card do
     raise unless card(rank: 4).rank == 4
   end
 
-  it 'is equal to itself' do
-    subject = card(suit: :spades, rank: 4)
-    other = card(suit: :spades, rank: 4)
+  context 'equality' do
+    # def subject
+    #   @subject ||= card(suit: :spades, rank: 4)
+    # end
+    subject { card(suit: :spades, rank: 4) }
 
-    raise unless  subject == other
-  end
+    describe 'comparing against self' do
+      let(:other) { card(suit: :spades, rank: 5) }
+      # def other
+      #   other ||= card(suit: :spades, rank: 5)
+      # end
 
-  it 'is not equal to a card of different suit' do
-    subject = card(suit: :spades, rank: 4)
-    other = card(suit: :hearts, rank: 4)
+      it 'is equal' do
+        other = card(suit: :spades, rank: 4)
 
-    raise unless  subject != other
-  end
+        raise unless  subject == other
+      end
 
-  it 'is not equal to a card of different suit' do
-    subject = card(suit: :spades, rank: 4)
-    other = card(suit: :spades, rank: 5)
+      it 'is hash equal' do
+        other = card(suit: :spades, rank: 4)
 
-    raise unless  subject != other
-  end
-
-  describe 'a jack' do
-    it 'ranks higher than a 10' do
-      lower = card(rank: 10)
-      higher = card(rank: :jack)
-
-      raise unless higher.rank > lower.rank
+        raise unless Set.new([subject, other]).size == 1
+      end
     end
-  end
 
-  describe 'a queen' do
-    it 'ranks higher than a jack' do
-      lower = card(rank: :jack)
-      higher = card(rank: :queen)
+    shared_examples_for 'an unequal card' do
+      it 'is not equal' do
+        raise unless subject != other
+      end
 
-      raise unless higher.rank > lower.rank
+      it 'is not hash equal' do
+        raise unless Set.new([subject, other]).size == 2
+      end
     end
-  end
+
+    describe 'comparing to a card of different suit' do
+      let(:other) { card(suit: :spades, rank: 5) }
+
+      it_behaves_like 'an unequal card'
+    end
+
+    describe 'comparing to a card of different rank' do
+      let(:other) { card(suit: :spades, rank: 5) }
+
+      it_behaves_like 'an unequal card'
+    end
+
+    describe 'a jack' do
+      it 'ranks higher than a 10' do
+        lower = card(rank: 10)
+        higher = card(rank: :jack)
+
+        raise unless higher.rank > lower.rank
+      end
+    end
+
+    describe 'a queen' do
+      it 'ranks higher than a jack' do
+        lower = card(rank: :jack)
+        higher = card(rank: :queen)
+
+        raise unless higher.rank > lower.rank
+      end
+    end
 
 
-  describe 'a king' do
-    it 'ranks higher than a queen' do
-      lower = card(rank: :queen)
-      higher = card(rank: :king)
+    describe 'a king' do
+      it 'ranks higher than a queen' do
+        lower = card(rank: :queen)
+        higher = card(rank: :king)
 
-      raise unless higher.rank > lower.rank
+        raise unless higher.rank > lower.rank
+      end
     end
   end
 end
