@@ -10,8 +10,13 @@ class Card
     when :jack then 11
     when :queen then 12
     when :king then 13
+    when :ace then 14
     else rank
     end
+  end
+
+  def inspect
+    to_s
   end
 
   def suit
@@ -32,6 +37,29 @@ class Card
 
   def eql?(other)
     self == other
+  end
+
+  def rank_to_s(rank)
+    rank > 10 ?
+      {
+        11 => 'J',
+        12 => 'Q',
+        13 => 'K',
+        14 => 'A'
+      }.fetch(rank) : rank
+  end
+
+  def suit_to_s(suit)
+    {
+      hearts: "♡ ",
+      spades: "♤ ",
+      diamonds: "♢ ",
+      clubs: "♧ ",
+    }.fetch(suit)
+  end
+
+  def to_s
+    "#{rank_to_s(rank)}#{suit_to_s(suit)}"
   end
 
 end
